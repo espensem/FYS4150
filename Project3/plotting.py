@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from matplotlib import rcParams
+
+rcParams.update({'figure.autolayout': True})
 
 N = int(sys.argv[1])		# number of bodies
 dt_string = sys.argv[2]
@@ -21,6 +24,7 @@ simulationTime = int(sys.argv[3])
 infile = open(pathToFile, 'r')
 
 earthIndex = 0
+jupiterIndex = 0
 listOfBodies = []
 for line in infile:
 	names = line.split()
@@ -28,6 +32,8 @@ for line in infile:
 		listOfBodies.append(name)
 		if name == "earth":
 			earthIndex = names.index(name)		# needed to find max x and y-values later
+		if name == "jupiter":
+			jupiterindex = names.index(name)	# needed to set plot axis later
 	break
 
 infile.close()
@@ -86,21 +92,21 @@ for body in listOfBodies:
 listOfColors = []
 for body in listOfBodies:
 	if body == "sun":
-		listOfColors.append('yo')
+		listOfColors.append('bo')
 	elif body == "mercury":
 		listOfColors.append('grey')
 	elif body == "venus":
 		listOfColors.append('lightseagreen')
 	elif body == "earth":
-		listOfColors.append('blue')
+		listOfColors.append('green')
 	elif body == "mars":
-		listOfColors.append('red')
-	elif body == "jupiter":
 		listOfColors.append('brown')
+	elif body == "jupiter":
+		listOfColors.append('red')
 	elif body == "saturn":
 		listOfColors.append('orangered')
 	elif body == "uranus":
-		listOfColors.append('green')
+		listOfColors.append('blue')
 	elif body == "neptune":
 		listOfColors.append('magenta')
 	elif body == "pluto":
@@ -114,11 +120,13 @@ for i in range(N):
 	plt.hold('on')
 
 plt.hold('off')
-plt.xlabel('$Distance \ in \ AU$')
-plt.ylabel('$Distance \ in \ AU$')
-plt.title('$%.0f \ years \ of \ solar \ system \ evolution \ with \ \Delta t=%g$' % (simulationTime, dt))
+plt.xlabel('Distance [AU]')
+plt.ylabel('Distance [AU]')
+#plt.title('$%.0f \ years \ of \ solar \ system \ evolution \ with \ \Delta t=%g$' % (simulationTime, dt))
 plt.axis('equal')
 plt.legend(listOfBodies)
+plt.xlim(-1.6*max(positions[jupiterIndex,:]), 1.6*max(positions[jupiterIndex,:])) 
+plt.ylim(-1.2*max(positions[jupiterIndex+1,:]), 1.2*max(positions[jupiterIndex+1,:]))
 plt.savefig(saveFigPositionsPath)
 
 # plotting the energy
@@ -131,7 +139,7 @@ plt.hold('on')
 plt.plot(time, totalEnergy, 'r')
 plt.xlabel('$Time \ in \ years$')
 plt.ylabel('$Energy \ (dimensionless)$')
-plt.title('$Energy \ of \ the \ Solar \ System \ with \ \Delta t=%g$' % dt)
+#plt.title('$Energy \ of \ the \ Solar \ System \ with \ \Delta t=%g$' % dt)
 plt.legend(['kinetic', 'potential', 'total'])
 plt.ylim([1.5*min(potentialEnergy), 1.5*max(kineticEnergy)])
 plt.savefig(saveFigEnergiesPath)
@@ -142,7 +150,7 @@ plt.figure(3)
 plt.plot(time, angularMomentum)
 plt.xlabel('$Time \ in \ years$')
 plt.ylabel('$Angular \ momentum \ in \ z-direction \ (dimensionless)$')
-plt.title('$Total \ angular \ momentum \ of \ the \ solar \ system \ with \ \Delta t=%g$' % dt)
+#plt.title('$Total \ angular \ momentum \ of \ the \ solar \ system \ with \ \Delta t=%g$' % dt)
 plt.savefig(saveFigAngMomPath)
 
 plt.show()
